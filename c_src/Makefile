@@ -28,7 +28,7 @@ endif
 
 CXXFLAGS += -fPIC -I $(ERTS_INCLUDE_DIR) 
 
-LDLIBS += -lerl_interface -lei -lvcdcom -lvcdenc -lvcdcom -lvcddec -lstdc++
+LDLIBS += -lstdc++
 LDFLAGS += -shared -rdynamic
 
 # Verbosity.
