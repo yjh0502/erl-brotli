@@ -10,6 +10,7 @@ COMMON_FLAGS = -fno-omit-frame-pointer -no-canonical-prefixes -O2 -fPIC
 
 ifeq ($(OS), Darwin)
   CPPFLAGS += -DOS_MACOSX
+else ifeq ($(OS), FreeBSD)
 else
   COMMON_FLAGS += -fno-tree-vrp
 endif

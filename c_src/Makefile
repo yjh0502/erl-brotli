@@ -18,7 +18,8 @@ ifeq ($(UNAME_SYS), Darwin)
 	CXXFLAGS ?= -O3 -std=c++11 -arch x86_64 -finline-functions -Wall
 	LDFLAGS ?= -arch x86_64 -flat_namespace -undefined suppress
 else ifeq ($(UNAME_SYS), FreeBSD)
-	CC ?= cc
+	CC = /usr/bin/clang
+	CXX = /usr/bin/clang++
 	CXXFLAGS ?= -O3 -std=c++11 -finline-functions -Wall
 else ifeq ($(UNAME_SYS), Linux)
 	CC ?= gcc
@@ -52,7 +53,7 @@ $(C_SRC_OUTPUT): brotli_nif.o brotli_encoder/libbrotli.a
 	$(COMPILE_CPP) $(OUTPUT_OPTION) $<
 
 brotli_encoder/libbrotli.a:
-	cd brotli_encoder && $(MAKE)
+	$(MAKE) -C brotli_encoder CXX=$(CXX)
 
 clean:
-	@rm -f $(C_SRC_OUTPUT) $(OBJECTS)
+	@rm -f $(C_SRC_OUTPUT) $(OBJECTS) && $(MAKE) clean -C brotli_encoder
