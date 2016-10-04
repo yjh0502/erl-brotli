@@ -15,22 +15,23 @@ C_SRC_OUTPUT ?= $(CURDIR)/../priv/$(PROJECT).so
 UNAME_SYS := $(shell uname -s)
 ifeq ($(UNAME_SYS), Darwin)
 	CC ?= cc
-	CXXFLAGS ?= -O3 -std=c++11 -arch x86_64 -finline-functions -Wall
+	CFLAGS += -O3 -std=c99 -arch x86_64 -finline-functions -Wall
 	LDFLAGS ?= -arch x86_64 -flat_namespace -undefined suppress
 else ifeq ($(UNAME_SYS), FreeBSD)
 	CC = /usr/bin/clang
-	CXX = /usr/bin/clang++
-	CXXFLAGS ?= -O3 -std=c++11 -finline-functions -Wall
+	CFLAGS += -O3 -std=c99 -finline-functions -Wall
 else ifeq ($(UNAME_SYS), Linux)
 	CC ?= gcc
-	CXX ?= g++
-	CXXFLAGS ?= -O3 -std=c++11 -finline-functions -Wall
+	CFLAGS += -O3 -std=c99 -finline-functions -Wall
 endif
 
-CXXFLAGS += -fPIC -I $(ERTS_INCLUDE_DIR) 
+CFLAGS += -fPIC -I $(ERTS_INCLUDE_DIR) 
 
 LDLIBS += -lstdc++
 LDFLAGS += -shared -rdynamic
+
+BROTLI_SRCS = $(wildcard common/*.c) $(wildcard enc/*.c)
+BROTLI_OBJS = $(patsubst %.c,%.o,$(BROTLI_SRCS))
 
 # Verbosity.
 
@@ -43,17 +44,14 @@ cpp_verbose = $(cpp_verbose_$(V))
 link_verbose_0 = @echo " LD    " $(@F);
 link_verbose = $(link_verbose_$(V))
 
-COMPILE_CPP = $(cpp_verbose) $(CXX) $(CXXFLAGS) $(CPPFLAGS) -c
+COMPILE_C = $(c_verbose) $(CC) $(CFLAGS) $(CPPFLAGS) -c
 
-$(C_SRC_OUTPUT): brotli_nif.o brotli_encoder/libbrotli.a
+$(C_SRC_OUTPUT): brotli_nif.o $(BROTLI_OBJS)
 	@mkdir -p $(BASEDIR)/priv/
 	$(link_verbose) $(CC) $^ $(LDFLAGS) $(LDLIBS) -o $(C_SRC_OUTPUT)
 
-%.o: %.cc
-	$(COMPILE_CPP) $(OUTPUT_OPTION) $<
-
-brotli_encoder/libbrotli.a:
-	$(MAKE) -C brotli_encoder CXX=$(CXX)
+%.o: %.c
+	$(COMPILE_C) $(OUTPUT_OPTION) $<
 
 clean:
-	@rm -f $(C_SRC_OUTPUT) $(OBJECTS) && $(MAKE) clean -C brotli_encoder
+	@rm -f $(C_SRC_OUTPUT) $(BROTLI_OBJS) brotli_nif.o
