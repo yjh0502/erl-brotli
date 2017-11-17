@@ -30,7 +30,7 @@
 -on_load(init/0).
 
 -define(APPNAME, brotli).
--define(LIBNAME, brotli).
+-define(LIBNAME, 'erl-brotli').
 
 -export([brotli_encode/2]).
 
