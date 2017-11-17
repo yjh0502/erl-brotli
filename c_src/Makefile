@@ -25,7 +25,7 @@ else ifeq ($(UNAME_SYS), Linux)
 	CFLAGS += -O3 -std=c99 -finline-functions -Wall
 endif
 
-CFLAGS += -fPIC -I $(ERTS_INCLUDE_DIR) 
+CFLAGS += -fPIC -I $(ERTS_INCLUDE_DIR) -I ./include/
 
 LDLIBS += -lstdc++
 LDFLAGS += -shared -rdynamic

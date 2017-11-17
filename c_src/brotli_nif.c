@@ -29,7 +29,7 @@
 
 #include <string.h>
 #include <erl_nif.h>
-#include "enc/encode.h"
+#include "include/brotli/encode.h"
 
 #define BADARG             enif_make_badarg(env)
 
