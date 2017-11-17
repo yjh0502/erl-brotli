@@ -10,7 +10,8 @@
 #define BROTLI_DEC_STATE_H_
 
 #include "../common/constants.h"
-#include "../common/types.h"
+#include "../common/dictionary.h"
+#include <brotli/types.h>
 #include "./bit_reader.h"
 #include "./huffman.h"
 #include "./port.h"
@@ -115,7 +116,6 @@ struct BrotliDecoderStateStruct {
 
   int pos;
   int max_backward_distance;
-  int max_backward_distance_minus_custom_dict_size;
   int max_distance;
   int ringbuffer_size;
   int ringbuffer_mask;
@@ -141,6 +141,8 @@ struct BrotliDecoderStateStruct {
   /* This is true if the literal context map histogram type always matches the
   block type. It is then not needed to keep the context (faster decoding). */
   int trivial_literal_context;
+  /* Distance context is actual after command is decoded and before distance
+  is computed. After distance computation it is used as a temporary variable. */
   int distance_context;
   int meta_block_remaining_len;
   uint32_t block_length_index;
@@ -161,8 +163,8 @@ struct BrotliDecoderStateStruct {
   int distance_code;
 
   /* For partial write operations */
-  size_t rb_roundtrips;  /* How many times we went around the ringbuffer */
-  size_t partial_pos_out;  /* How much output to the user in total (<= rb) */
+  size_t rb_roundtrips;  /* How many times we went around the ring-buffer */
+  size_t partial_pos_out;  /* How much output to the user in total */
 
   /* For ReadHuffmanCode */
   uint32_t symbol;
@@ -170,7 +172,7 @@ struct BrotliDecoderStateStruct {
   uint32_t space;
 
   HuffmanCode table[32];
-  /* List of of symbol chains. */
+  /* List of heads of symbol chains. */
   uint16_t* symbol_lists;
   /* Storage from symbol_lists. */
   uint16_t symbols_lists_array[BROTLI_HUFFMAN_MAX_CODE_LENGTH + 1 +
@@ -193,11 +195,7 @@ struct BrotliDecoderStateStruct {
 
   /* For InverseMoveToFrontTransform */
   uint32_t mtf_upper_bound;
-  uint8_t mtf[256 + 4];
-
-  /* For custom dictionaries */
-  const uint8_t* custom_dict;
-  int custom_dict_size;
+  uint32_t mtf[64 + 1];
 
   /* less used attributes are in the end of this struct */
   /* States inside function calls */
@@ -209,15 +207,20 @@ struct BrotliDecoderStateStruct {
   BrotliRunningDecodeUint8State substate_decode_uint8;
   BrotliRunningReadBlockLengthState substate_read_block_length;
 
-  uint8_t is_last_metablock;
-  uint8_t is_uncompressed;
-  uint8_t is_metadata;
-  uint8_t size_nibbles;
+  unsigned int is_last_metablock : 1;
+  unsigned int is_uncompressed : 1;
+  unsigned int is_metadata : 1;
+  unsigned int should_wrap_ringbuffer : 1;
+  unsigned int canny_ringbuffer_allocation : 1;
+  unsigned int size_nibbles : 8;
   uint32_t window_bits;
+
+  int new_ringbuffer_size;
 
   uint32_t num_literal_htrees;
   uint8_t* context_map;
   uint8_t* context_modes;
+  const BrotliDictionary* dictionary;
 
   uint32_t trivial_literal_contexts[8];  /* 256 bits */
 };
@@ -233,11 +236,9 @@ BROTLI_INTERNAL void BrotliDecoderStateCleanup(BrotliDecoderState* s);
 BROTLI_INTERNAL void BrotliDecoderStateMetablockBegin(BrotliDecoderState* s);
 BROTLI_INTERNAL void BrotliDecoderStateCleanupAfterMetablock(
     BrotliDecoderState* s);
-BROTLI_INTERNAL void BrotliDecoderHuffmanTreeGroupInit(
+BROTLI_INTERNAL BROTLI_BOOL BrotliDecoderHuffmanTreeGroupInit(
     BrotliDecoderState* s, HuffmanTreeGroup* group, uint32_t alphabet_size,
     uint32_t ntrees);
-BROTLI_INTERNAL void BrotliDecoderHuffmanTreeGroupRelease(
-    BrotliDecoderState* s, HuffmanTreeGroup* group);
 
 #if defined(__cplusplus) || defined(c_plusplus)
 }  /* extern "C" */
