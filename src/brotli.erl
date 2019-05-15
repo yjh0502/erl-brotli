@@ -9,3 +9,12 @@ encode(Data) ->
 
 encode(Data, Quality) ->
     brotli_nif:brotli_encode(Data, Quality).
+
+-ifdef(TEST).
+
+-include_lib("eunit/include/eunit.hrl").
+
+encode_test() ->
+    ?assert(is_binary(encode(<<"hello">>))).
+
+-endif.
