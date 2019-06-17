@@ -29,7 +29,7 @@ CFLAGS += -fPIC -I $(ERTS_INCLUDE_DIR) -I ./include/
 LDLIBS += -lstdc++
 LDFLAGS += -shared -rdynamic
 
-BROTLI_SRCS = $(wildcard common/*.c) $(wildcard enc/*.c)
+BROTLI_SRCS = $(wildcard common/*.c) $(wildcard enc/*.c) $(wildcard dec/*.c)
 BROTLI_OBJS = $(patsubst %.c,%.o,$(BROTLI_SRCS))
 
 # Verbosity.

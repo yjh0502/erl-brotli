@@ -30,6 +30,7 @@
 #include <string.h>
 #include <erl_nif.h>
 #include "include/brotli/encode.h"
+#include "include/brotli/decode.h"
 
 #define BADARG             enif_make_badarg(env)
 
@@ -73,6 +74,39 @@ brotli_encode(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
     return enif_make_binary(env, &encoded);
 }
 
+static ERL_NIF_TERM
+brotli_decode(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+  ErlNifBinary data, decoded;
+
+  if (argc != 1) {
+    return (BADARG);
+  }
+
+  if (!enif_inspect_iolist_as_binary(env, argv[0], &data)) {
+    return (BADARG);
+  }
+
+  size_t length = data.size;
+  size_t output_length = data.size * 100; /* FIXME: how to calculate optimal value??? */
+  uint8_t* output = malloc(output_length);
+  BROTLI_BOOL ok = BrotliDecoderDecompress(length, data.data,
+                                           &output_length, output);
+  if(!ok) {
+    free(output);
+    return (BADARG);
+  }
+  if (!enif_alloc_binary(output_length, &decoded)) {
+    free(output);
+    return (BADARG);
+  }
+
+  memcpy(decoded.data, output, output_length);
+  free(output);
+
+  return enif_make_binary(env, &decoded);
+}
+
 static int
 brotli_load(ErlNifEnv *env, void **priv_data, ERL_NIF_TERM load_info)
 {
@@ -81,6 +115,7 @@ brotli_load(ErlNifEnv *env, void **priv_data, ERL_NIF_TERM load_info)
 
 static ErlNifFunc brotli_exports[] = {
     {"brotli_encode", 2, brotli_encode},
+    {"brotli_decode", 1, brotli_decode},
 };
 
 ERL_NIF_INIT(brotli_nif, brotli_exports, brotli_load, NULL, NULL, NULL)
