@@ -17,8 +17,8 @@ ifeq ($(UNAME_SYS), Darwin)
 	CFLAGS += -O3 -std=c++17 -arch x86_64 -finline-functions -Wall
 	LDFLAGS ?= -arch x86_64 -flat_namespace -undefined suppress
 else ifeq ($(UNAME_SYS), FreeBSD)
-	CC = /usr/bin/clang
-	CFLAGS += -O3 -std=c99 -finline-functions -Wall
+	CC = /usr/bin/clang++
+	CFLAGS += -O3 -std=c++17 -finline-functions -Wall
 else ifeq ($(UNAME_SYS), Linux)
 	CC = g++
 	CFLAGS += -O3 -std=c++17 -finline-functions -Wall
