@@ -446,3 +446,4 @@ BROTLI_ENC_API uint32_t BrotliEncoderVersion(void);
 #endif
 
 #endif  /* BROTLI_ENC_ENCODE_H_ */
+
