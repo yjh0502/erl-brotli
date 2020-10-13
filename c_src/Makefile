@@ -13,15 +13,15 @@ C_SRC_OUTPUT ?= $(CURDIR)/../priv/$(PROJECT).so
 
 UNAME_SYS := $(shell uname -s)
 ifeq ($(UNAME_SYS), Darwin)
-	CC ?= cc
-	CFLAGS += -O3 -std=c99 -arch x86_64 -finline-functions -Wall
+	CC = g++
+	CFLAGS += -O3 -std=c++17 -arch x86_64 -finline-functions -Wall
 	LDFLAGS ?= -arch x86_64 -flat_namespace -undefined suppress
 else ifeq ($(UNAME_SYS), FreeBSD)
 	CC = /usr/bin/clang
 	CFLAGS += -O3 -std=c99 -finline-functions -Wall
 else ifeq ($(UNAME_SYS), Linux)
-	CC ?= gcc
-	CFLAGS += -O3 -std=c99 -finline-functions -Wall
+	CC = g++
+	CFLAGS += -O3 -std=c++17 -finline-functions -Wall
 endif
 
 CFLAGS += -fPIC -I $(ERTS_INCLUDE_DIR) -I ./include/
@@ -29,7 +29,7 @@ CFLAGS += -fPIC -I $(ERTS_INCLUDE_DIR) -I ./include/
 LDLIBS += -lstdc++
 LDFLAGS += -shared -rdynamic
 
-BROTLI_SRCS = $(wildcard common/*.c) $(wildcard enc/*.c)
+BROTLI_SRCS = $(wildcard common/*.c) $(wildcard enc/*.c) $(wildcard dec/*.c)
 BROTLI_OBJS = $(patsubst %.c,%.o,$(BROTLI_SRCS))
 
 # Verbosity.

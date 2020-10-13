@@ -29,7 +29,9 @@
 
 #include <string.h>
 #include <erl_nif.h>
+#include <vector>
 #include "include/brotli/encode.h"
+#include "include/brotli/decode.h"
 
 #define BADARG             enif_make_badarg(env)
 
@@ -53,7 +55,7 @@ brotli_encode(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
 
     size_t length = data.size;
     size_t output_length = BrotliEncoderMaxCompressedSize(data.size);
-    uint8_t* output = malloc(output_length);
+    uint8_t* output = (uint8_t*)malloc(output_length);
     BROTLI_BOOL ok = BrotliEncoderCompress(quality,
         BROTLI_DEFAULT_WINDOW, BROTLI_DEFAULT_MODE,
         length, data.data,
@@ -73,14 +75,64 @@ brotli_encode(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
     return enif_make_binary(env, &encoded);
 }
 
-static int
+  static ERL_NIF_TERM
+brotli_decode(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
+{
+  ErlNifBinary data, decoded;
+  const uint8_t* next_in;
+  size_t available_in;
+  int ok;
+
+  if (argc != 1) {
+    return (BADARG);
+  }
+
+  if (!enif_inspect_iolist_as_binary(env, argv[0], &data)) {
+    return (BADARG);
+  }
+
+  std::vector<uint8_t> output;
+
+  BrotliDecoderState* state = BrotliDecoderCreateInstance(0, 0, 0);
+
+  BrotliDecoderResult result = BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT;
+  next_in = static_cast<uint8_t*>(data.data);
+  available_in = data.size;
+
+  while (result == BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT) {
+    size_t available_out = 0;
+    result = BrotliDecoderDecompressStream(state, &available_in, &next_in,
+                                           &available_out, 0, 0);
+    const uint8_t* next_out = BrotliDecoderTakeOutput(state, &available_out);
+    if (available_out != 0)
+      output.insert(output.end(), next_out, next_out + available_out);
+  }
+  ok = result == BROTLI_DECODER_RESULT_SUCCESS && !available_in;
+  BrotliDecoderDestroyInstance(state);
+
+  if(!ok) {
+    return (BADARG);
+  }
+  if (!enif_alloc_binary(output.size(), &decoded)) {
+    return (BADARG);
+  }
+
+  /* memcpy(decoded.data, &buffer, (1 << 26)); */
+  /* free(buffer); */
+  std::copy(output.begin(), output.end(), decoded.data);
+
+  return enif_make_binary(env, &decoded);
+}
+
+  static int
 brotli_load(ErlNifEnv *env, void **priv_data, ERL_NIF_TERM load_info)
 {
-    return 0;
+  return 0;
 }
 
 static ErlNifFunc brotli_exports[] = {
-    {"brotli_encode", 2, brotli_encode},
+  {"brotli_decode", 1, brotli_decode},
+  {"brotli_encode", 2, brotli_encode}
 };
 
 ERL_NIF_INIT(brotli_nif, brotli_exports, brotli_load, NULL, NULL, NULL)
