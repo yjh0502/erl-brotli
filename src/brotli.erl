@@ -1,6 +1,6 @@
 -module('brotli').
 
--export([encode/1, encode/2]).
+-export([encode/1, encode/2, decode/1]).
 
 -define(DEFAULT_QUALITY, 6).
 
@@ -9,6 +9,9 @@ encode(Data) ->
 
 encode(Data, Quality) ->
     brotli_nif:brotli_encode(Data, Quality).
+
+decode(Data) ->
+   brotli_nif:brotli_decode(Data).
 
 -ifdef(TEST).
 

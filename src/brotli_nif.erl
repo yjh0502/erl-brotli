@@ -32,7 +32,7 @@
 -define(APPNAME, brotli).
 -define(LIBNAME, 'erl-brotli').
 
--export([brotli_encode/2]).
+-export([brotli_encode/2, brotli_decode/1]).
 
 %%%
 init() ->
@@ -54,3 +54,5 @@ init() ->
 brotli_encode(_Data, _Quality) ->
     erlang:nif_error(not_loaded).
 
+brotli_decode(_Data) ->
+   erlang:nif_error(not_loaded).
