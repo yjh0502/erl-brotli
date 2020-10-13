@@ -117,8 +117,6 @@ brotli_decode(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[])
     return (BADARG);
   }
 
-  /* memcpy(decoded.data, &buffer, (1 << 26)); */
-  /* free(buffer); */
   std::copy(output.begin(), output.end(), decoded.data);
 
   return enif_make_binary(env, &decoded);
