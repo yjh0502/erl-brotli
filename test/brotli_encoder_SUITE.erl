@@ -35,7 +35,7 @@ large_file(Config) ->
 
     Hash = compress_and_hash(File, Encoder, Hasher),
 
-    ?assertEqual(Sha256Sum, binary:encode_hex(Hash)).
+    ?assertEqual(Sha256Sum, to_hex(Hash)).
 
 compress_and_hash(File, Encoder, Hasher) ->
     case file:read(File, 1024) of
@@ -48,3 +48,6 @@ compress_and_hash(File, Encoder, Hasher) ->
             NewHasher = crypto:hash_update(Hasher, Compressed),
             crypto:hash_final(NewHasher)
     end.
+
+to_hex(Bin) ->
+    << <<Y>> ||<<X:4>> <= Bin, Y <- integer_to_list(X,16)>>.

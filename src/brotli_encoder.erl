@@ -60,9 +60,9 @@ new(Opts) when is_map(Opts) ->
 
 -spec set_opts(Encoder :: t(), Opts :: options()) -> ok.
 set_opts(Encoder, Opts) when is_map(Opts) ->
-    maps:foreach(fun(Key, Value) ->
-                         true = brotli_nif:encoder_set_parameter(Encoder, Key, Value)
-                 end, Opts),
+    maps:fold(fun(Key, Value, _Acc) ->
+                      true = brotli_nif:encoder_set_parameter(Encoder, Key, Value)
+              end, [], Opts),
     ok.
 
 -spec append(Encoder :: t(), Data :: iodata()) -> {ok, iodata()} | error.
