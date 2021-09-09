@@ -1,7 +1,7 @@
 brotli
 =====
 
-An OTP library
+A library providing Erlang API for Brotli compression library.
 
 Build
 -----

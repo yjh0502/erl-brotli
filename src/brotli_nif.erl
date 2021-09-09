@@ -1,4 +1,5 @@
 %%% Copyright (c) 2016 Jihyun Yu <yjh0502@gmail.com>
+%%% Copyright (c) 2021 Łukasz Niemier <lukasz@niemier.pl>
 %%% All rights reserved.
 %%%
 %%% Redistribution and use in source and binary forms, with or without
@@ -25,32 +26,56 @@
 %%% ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 %%% POSSIBILITY OF SUCH DAMAGE.
 
+%% @hidden
+
 -module(brotli_nif).
 
--on_load(init/0).
+-on_load init/0.
 
 -define(APPNAME, brotli).
--define(LIBNAME, 'erl-brotli').
+-define(LIBNAME, brotli).
 
--export([brotli_encode/2]).
+-export([encoder_create/0, encoder_set_parameter/3, encoder_compress_stream/3,
+         encoder_has_more_output/1, encoder_is_finished/1, encoder_take_output/1]).
+-export([max_compressed_size/1, version/0]).
 
 %%%
 init() ->
     SoName = case code:priv_dir(?APPNAME) of
-        {error, bad_name} ->
-            case filelib:is_dir(filename:join(["..", priv])) of
-                true ->
-                    filename:join(["..", priv, ?LIBNAME]);
-                _ ->
-                    filename:join([priv, ?LIBNAME])
-            end;
-        Dir ->
-            filename:join(Dir, ?LIBNAME)
-    end,
+                 {error, bad_name} ->
+                     case filelib:is_dir(filename:join(["..", priv])) of
+                         true ->
+                             filename:join(["..", priv, ?LIBNAME]);
+                         _ ->
+                             filename:join([priv, ?LIBNAME])
+                     end;
+                 Dir ->
+                     filename:join(Dir, ?LIBNAME)
+             end,
     erlang:load_nif(SoName, 0).
 
 %%% Exported from brotli_nif.c.
 
-brotli_encode(_Data, _Quality) ->
+encoder_create() ->
     erlang:nif_error(not_loaded).
 
+encoder_set_parameter(_Encoder, _Param, _Value) ->
+    erlang:nif_error(not_loaded).
+
+encoder_compress_stream(_Encoder, _Op, _Value) ->
+    erlang:nif_error(not_loaded).
+
+encoder_has_more_output(_Encoder) ->
+    erlang:nif_error(not_loaded).
+
+encoder_is_finished(_Encoder) ->
+    erlang:nif_error(not_loaded).
+
+encoder_take_output(_Encoder) ->
+    erlang:nif_error(not_loaded).
+
+max_compressed_size(_Size) ->
+    erlang:nif_error(not_loaded).
+
+version() ->
+    erlang:nif_error(not_loaded).
