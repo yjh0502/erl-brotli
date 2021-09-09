@@ -3,10 +3,10 @@ name: Erlang CI
 on:
   pull_request:
     branches:
-      - 'main'
+      - 'master'
   push:
     branches:
-      - 'main'
+      - 'master'
 
 jobs:
   build:
@@ -26,8 +26,6 @@ jobs:
       OTEL_TRACES_EXPORTER: "none"
     steps:
     - uses: actions/checkout@v2
-    - name: Run Collector
-      run: docker-compose up -d
     - uses: erlef/setup-beam@v1
       with:
         otp-version: ${{ matrix.otp_version }}
