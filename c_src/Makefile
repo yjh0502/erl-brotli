@@ -7,9 +7,10 @@ PROJECT = brotli
 
 ERTS_INCLUDE_DIR ?= $(shell erl -noshell -s init stop -eval "io:format(\"~s/erts-~s/include/\", [code:root_dir(), erlang:system_info(version)]).")
 
-C_SRC_OUTPUT ?= $(CURDIR)/../priv/$(PROJECT).so
+OUT ?= $(BASEDIR)/priv
 
 # System type and C compiler/flags.
+#
 
 UNAME_SYS := $(shell uname -s)
 ifeq ($(UNAME_SYS), Darwin)
@@ -26,10 +27,9 @@ endif
 
 CFLAGS += -fPIC -I $(ERTS_INCLUDE_DIR) -I ./include/
 
-LDLIBS += -lstdc++
 LDFLAGS += -shared -rdynamic
 
-BROTLI_SRCS = $(wildcard common/*.c) $(wildcard enc/*.c) $(wildcard dec/*.c)
+BROTLI_SRCS = $(wildcard common/*.c) $(wildcard dec/*.c) $(wildcard enc/*.c)
 BROTLI_OBJS = $(patsubst %.c,%.o,$(BROTLI_SRCS))
 
 # Verbosity.
@@ -43,14 +43,26 @@ cpp_verbose = $(cpp_verbose_$(V))
 link_verbose_0 = @echo " LD    " $(@F);
 link_verbose = $(link_verbose_$(V))
 
-COMPILE_C = $(c_verbose) $(CC) $(CFLAGS) $(CPPFLAGS) -c
+lib: $(OUT)/$(PROJECT).so
 
-$(C_SRC_OUTPUT): brotli_nif.o $(BROTLI_OBJS)
-	@mkdir -p $(BASEDIR)/priv/
-	$(link_verbose) $(CC) $^ $(LDFLAGS) $(LDLIBS) -o $(C_SRC_OUTPUT)
+$(OUT)/$(PROJECT).so: brotli_nif.o $(BROTLI_OBJS)
+	@mkdir -p $(@D)
+	$(link_verbose) $(CC) $^ $(LDFLAGS) $(LDLIBS) -o $@
+
+tool: $(OUT)/brotli
+
+$(OUT)/brotli: $(BROTLI_OBJS) tools/brotli.o
+	$(link_verbose) $(CC) $^ -lm $(LDLIBS) -o $@
+
+tools/brotli.o: tools/brotli.c
+	$(c_verbose) $(CC) -O2 -I ./include/ $(CPPFLAGS) -c $< -o $@
 
 %.o: %.c
-	$(COMPILE_C) $(OUTPUT_OPTION) $<
+	$(c_verbose) $(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
-	@rm -f $(C_SRC_OUTPUT) $(BROTLI_OBJS) brotli_nif.o
+	@rm -f $(OUT)/$(PROJECT).so \
+		$(OUT)/brotli $(BROTLI_OBJS) \
+		tools/brotli.o brotli_nif.o
+
+.PHONY: lib tool
