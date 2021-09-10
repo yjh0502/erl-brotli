@@ -50,6 +50,12 @@ jobs:
     - name: Covertool
       if: ${{ always() }}
       run: rebar3 covertool generate
+    - uses: codecov/codecov-action@v1
+      if: ${{ always() }}
+      with:
+        file: _build/test/covertool/brotli.covertool.xml
+        env_vars: OTP_VERSION
+
   dialyzer:
     name: Dialyze on OTP ${{ matrix.otp_version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
