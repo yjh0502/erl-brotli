@@ -45,6 +45,8 @@ jobs:
       run: rebar3 eunit --cover
     - name: Common Test tests
       run: rebar3 ct --cover
+    - name: PropEr tests
+      run: rebar3 proper --cover
     - name: XRef
       run: rebar3 xref
     - name: Covertool

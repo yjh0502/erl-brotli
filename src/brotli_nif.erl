@@ -37,6 +37,9 @@
 
 -export([encoder_create/0, encoder_set_parameter/3, encoder_compress_stream/3,
          encoder_has_more_output/1, encoder_is_finished/1, encoder_take_output/1]).
+-export([decoder_create/0, decoder_decompress_stream/2,
+         decoder_has_more_output/1, decoder_is_finished/1, decoder_is_used/1, decoder_take_output/1,
+         decoder_error_description/1]).
 -export([max_compressed_size/1, version/0]).
 
 %%%
@@ -72,6 +75,27 @@ encoder_is_finished(_Encoder) ->
     erlang:nif_error(not_loaded).
 
 encoder_take_output(_Encoder) ->
+    erlang:nif_error(not_loaded).
+
+decoder_create() ->
+    erlang:nif_error(not_loaded).
+
+decoder_decompress_stream(_Encoder, _Value) ->
+    erlang:nif_error(not_loaded).
+
+decoder_has_more_output(_Encoder) ->
+    erlang:nif_error(not_loaded).
+
+decoder_is_finished(_Encoder) ->
+    erlang:nif_error(not_loaded).
+
+decoder_is_used(_Encoder) ->
+    erlang:nif_error(not_loaded).
+
+decoder_take_output(_Encoder) ->
+    erlang:nif_error(not_loaded).
+
+decoder_error_description(_Encoder) ->
     erlang:nif_error(not_loaded).
 
 max_compressed_size(_Size) ->

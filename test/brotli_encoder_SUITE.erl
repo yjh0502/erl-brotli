@@ -50,4 +50,4 @@ compress_and_hash(File, Encoder, Hasher) ->
     end.
 
 to_hex(Bin) ->
-    << <<Y>> ||<<X:4>> <= Bin, Y <- integer_to_list(X,16)>>.
+    << <<Y>> || <<X:4>> <= Bin, Y <- integer_to_list(X,16) >>.

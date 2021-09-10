@@ -27,3 +27,8 @@ iex(4)> :brotli.encode(data)
   17, 37, 220, 118, 138, 187, 41, 76, 228, 132, 35, 13, 24, 219, 14, 32, 47, 4,
   75, 143, 249, 185, 81, 45, 180, 71, 235, 190, 41, 53, 44, ...>>
 ```
+
+### License
+
+Library and most tests are licensed on [BSD-3-Clause](LICENSE) License.
+Some tests, in files matching glob `prop_*.erl` are GPL-3.0 licensed.

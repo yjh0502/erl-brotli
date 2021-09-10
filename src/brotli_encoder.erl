@@ -67,7 +67,12 @@ set_opts(Encoder, Opts) when is_map(Opts) ->
 
 -spec append(Encoder :: t(), Data :: iodata()) -> {ok, iodata()} | error.
 append(Encoder, Data) ->
-    brotli_nif:encoder_compress_stream(Encoder, process, Data).
+    case brotli_nif:encoder_compress_stream(Encoder, process, Data) of
+        true ->
+            {ok, brotli_nif:encoder_take_output(Encoder)};
+        false ->
+            error
+    end.
 
 -spec finish(Encoder :: t()) -> {ok, iodata()} | error.
 finish(Encoder) ->
@@ -76,8 +81,8 @@ finish(Encoder) ->
 -spec finish(Encoder :: t(), Data :: iodata()) -> {ok, iodata()} | error.
 finish(Encoder, Data) ->
     case brotli_nif:encoder_compress_stream(Encoder, finish, Data) of
-        ok ->
+        true ->
             {ok, brotli_nif:encoder_take_output(Encoder)};
-        error ->
+        false ->
             error
     end.
