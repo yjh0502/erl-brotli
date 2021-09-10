@@ -28,6 +28,7 @@
 -module(brotli_encoder).
 
 -export([new/0, new/1, set_opts/2, append/2, finish/2, finish/1]).
+-export([is_finished/1]).
 
 -export_type([t/0, mode/0, options/0, ndirect/0]).
 
@@ -86,3 +87,7 @@ finish(Encoder, Data) ->
         false ->
             error
     end.
+
+-spec is_finished(Encoder :: t()) -> boolean().
+is_finished(Encoder) ->
+    brotli_nif:encoder_is_finished(Encoder).

@@ -58,53 +58,26 @@ encode(Data) ->
 encode(Data, Opts0) when is_map(Opts0) ->
     Opts = maps:put(size_hint, iolist_size(Data), Opts0),
     Encoder = brotli_encoder:new(Opts),
-    brotli_encoder:finish(Encoder, Data).
+    case brotli_encoder:finish(Encoder, Data) of
+        {ok, _} = Result ->
+            case brotli_encoder:is_finished(Encoder) of
+                true -> Result;
+                false -> error
+            end;
+        Other ->
+            Other
+    end.
 
 decode(Data) ->
     decode(Data, #{}).
 decode(Data, _Opts) ->
     Decoder = brotli_decoder:new(),
-    {ok, Result} = brotli_decoder:stream(Decoder, Data),
-    case brotli_decoder:is_finished(Decoder) of
-        true -> {ok, Result};
-        false -> error
+    case brotli_decoder:stream(Decoder, Data) of
+        {ok, _} = Result ->
+            case brotli_decoder:is_finished(Decoder) of
+                true -> Result;
+                false -> error
+            end;
+        _ ->
+            error
     end.
-
--ifdef(EUNIT).
-
--include_lib("eunit/include/eunit.hrl").
-
-encode_simple_test_() ->
-    Input = <<"hello">>,
-    Compressed = <<11, 2, 128, 104, 101, 108, 108, 111, 3>>,
-    [?_assertEqual({ok, Compressed}, encode(Input)),
-     ?_assertEqual({ok, Compressed}, encode(Input, #{})),
-     ?_assertEqual({ok, Compressed}, encode(Input, #{mode => generic})),
-     ?_assertEqual({ok, Compressed}, encode(Input, #{mode => text})),
-     ?_assertEqual({ok, Compressed}, encode(Input, #{mode => font}))]
-    ++ lists:map(fun(Level) ->
-                         ?_assertEqual({ok, Compressed}, encode(<<"hello">>, #{quality => Level}))
-                 end,
-                 lists:seq(0, 11)).
-
-encode_window_test_() ->
-    Input = <<"hello">>,
-    Fun = fun(Window) ->
-                  {ok, Encoded} = encode(Input, #{window => Window}),
-                  {ok, Decoded} = decode(Encoded),
-                  ?_assertEqual(Input, Decoded)
-          end,
-    lists:map(Fun, lists:seq(10, 24)).
-
-encode_string_test() ->
-    ?assertEqual(encode(<<"hello">>), encode("hello")).
-
-encode_iodata_test() ->
-    ?assertEqual(encode(<<"hello">>), encode(["he", $l, <<"lo">>])).
-
-decode_simple_test_() ->
-    Input = <<"hello">>,
-    Compressed = <<11, 2, 128, 104, 101, 108, 108, 111, 3>>,
-    [?_assertEqual({ok, Input}, decode(Compressed))].
-
--endif.

@@ -21,7 +21,7 @@ prop_encoded_can_be_decoded() ->
     ?FORALL(Data, binary(), begin
                                 {ok, Encoded} = brotli:encode(Data),
                                 {ok, Decoded} = brotli:decode(Encoded),
-                                Data == Decoded
+                                Data =:= Decoded
                             end).
 
 prop_encoded_data_can_be_decoded_partially() ->
@@ -29,5 +29,19 @@ prop_encoded_data_can_be_decoded_partially() ->
                                 {ok, Encoded} = brotli:encode(Data),
                                 Decoder = brotli_decoder:new(),
                                 Decoded = [element(2, brotli_decoder:stream(Decoder, <<B>>)) || <<B>> <= Encoded],
-                                Data == iolist_to_binary(Decoded)
+                                Data =:= iolist_to_binary(Decoded)
+                            end).
+
+prop_encoding_all_at_once_and_byte_by_byte_is_equivalent() ->
+    ?FORALL(Data, binary(), begin
+                                Encoder = brotli_encoder:new(),
+                                Encoded = [element(2, brotli_encoder:append(Encoder, <<B>>)) || <<B>> <= Data],
+                                {ok, Last} = brotli_encoder:finish(Encoder),
+                                brotli:encode(Data) =:= {ok, iolist_to_binary([Encoded, Last])}
+                            end).
+
+prop_encoded_is_not_bigger_than_max_compressed_size() ->
+    ?FORALL(Data, binary(), begin
+                                {ok, Encoded} = brotli:encode(Data),
+                                byte_size(Encoded) =< brotli:max_compressed_size(byte_size(Data))
                             end).

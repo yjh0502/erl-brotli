@@ -28,7 +28,7 @@
 -module(brotli_decoder).
 
 -export([new/0, stream/2]).
--export([is_finished/1, is_used/1, has_more_output/1]).
+-export([is_finished/1, is_used/1]).
 
 -export_type([t/0]).
 
@@ -54,6 +54,3 @@ is_finished(Decoder) ->
 
 is_used(Decoder) ->
     brotli_nif:decoder_is_used(Decoder).
-
-has_more_output(Decoder) ->
-    brotli_nif:decoder_has_more_output(Decoder).

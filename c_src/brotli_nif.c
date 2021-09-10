@@ -80,8 +80,6 @@ BOOLS;
 #undef ENTRYV
 /* }}} */
 
-static ERL_NIF_TERM version;
-
 static ErlNifResourceType *encoder_state_resource_type;
 static ErlNifResourceType *decoder_state_resource_type;
 
@@ -370,7 +368,12 @@ static ERL_NIF_TERM brotli_decoder_error_description(ErlNifEnv *env, int argc, c
 static ERL_NIF_TERM brotli_version(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
   assert_argc(0);
 
-  return version;
+  // Cache library version
+  ERL_NIF_TERM major = enif_make_int(env, BROTLI_VERSION >> 24);
+  ERL_NIF_TERM minor = enif_make_int(env, (BROTLI_VERSION >> 12) & 0xFFF);
+  ERL_NIF_TERM patch = enif_make_int(env, BROTLI_VERSION & 0xFFF);
+
+  return enif_make_tuple3(env, major, minor, patch);
 }
 
 static ERL_NIF_TERM brotli_max_compressed_size(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
@@ -379,7 +382,7 @@ static ERL_NIF_TERM brotli_max_compressed_size(ErlNifEnv *env, int argc, const E
 
   if (!enif_get_uint64(env, argv[0], &input_size)) { return BADARG; }
 
-  return enif_make_uint64(env, input_size);
+  return enif_make_uint64(env, BrotliEncoderMaxCompressedSize(input_size));
 }
 /* }}} */
 
@@ -395,13 +398,6 @@ static int brotli_init(ErlNifEnv *env, void **priv_data, ERL_NIF_TERM load_info)
   MODES;
   BOOLS;
   #undef ENTRYV
-
-  // Cache library version
-  ERL_NIF_TERM major = enif_make_int(env, BROTLI_VERSION >> 24);
-  ERL_NIF_TERM minor = enif_make_int(env, (BROTLI_VERSION >> 12) & 0xFFF);
-  ERL_NIF_TERM patch = enif_make_int(env, BROTLI_VERSION & 0xFFF);
-
-  version = enif_make_tuple3(env, major, minor, patch);
 
   // Initialize resource types
   encoder_state_resource_type = enif_open_resource_type(
