@@ -14,13 +14,13 @@ fixture_equal(Config) ->
     {ok, InFiles} = file:list_dir(InDir),
 
     Test = fun(FileName) ->
-                   InFile = filename:join(InDir, FileName),
-                   OutFile = filename:join(OutDir, FileName),
-                   ct:log("~s = encode(~s)~n", [OutFile, InFile]),
-                   {ok, In} = file:read_file(InFile),
-                   {ok, Out} = file:read_file(OutFile),
-                   ?assertEqual({ok, Out}, brotli:encode(In))
-           end,
+        InFile = filename:join(InDir, FileName),
+        OutFile = filename:join(OutDir, FileName),
+        ct:log("~s = encode(~s)~n", [OutFile, InFile]),
+        {ok, In} = file:read_file(InFile),
+        {ok, Out} = file:read_file(OutFile),
+        ?assertEqual({ok, Out}, brotli:encode(In))
+    end,
 
     [Test(Name) || Name <- InFiles].
 
@@ -50,4 +50,4 @@ compress_and_hash(File, Encoder, Hasher) ->
     end.
 
 to_hex(Bin) ->
-    << <<Y>> || <<X:4>> <= Bin, Y <- integer_to_list(X,16) >>.
+    <<<<Y>> || <<X:4>> <= Bin, Y <- integer_to_list(X, 16)>>.

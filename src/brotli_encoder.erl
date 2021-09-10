@@ -37,17 +37,17 @@
 -type mode() :: generic | text | font.
 -type ndirect() :: non_neg_integer().
 -type options() :: #{
-                   mode => mode(),
-                   quality => 0..11,
-                   window => 10..30,
-                   block_size => 16..24,
-                   literal_context_modeling => boolean(),
-                   size_hint => non_neg_integer(),
-                   large_window => boolean(),
-                   npostfix => 0..3,
-                   ndirect => ndirect(),
-                   stream_offset => non_neg_integer()
-                  }.
+    mode => mode(),
+    quality => 0..11,
+    window => 10..30,
+    block_size => 16..24,
+    literal_context_modeling => boolean(),
+    size_hint => non_neg_integer(),
+    large_window => boolean(),
+    npostfix => 0..3,
+    ndirect => ndirect(),
+    stream_offset => non_neg_integer()
+}.
 
 -spec new() -> t().
 new() ->
@@ -61,9 +61,13 @@ new(Opts) when is_map(Opts) ->
 
 -spec set_opts(Encoder :: t(), Opts :: options()) -> ok.
 set_opts(Encoder, Opts) when is_map(Opts) ->
-    maps:fold(fun(Key, Value, _Acc) ->
-                      true = brotli_nif:encoder_set_parameter(Encoder, Key, Value)
-              end, [], Opts),
+    maps:fold(
+        fun(Key, Value, _Acc) ->
+            true = brotli_nif:encoder_set_parameter(Encoder, Key, Value)
+        end,
+        [],
+        Opts
+    ),
     ok.
 
 -spec append(Encoder :: t(), Data :: iodata()) -> {ok, iodata()} | error.

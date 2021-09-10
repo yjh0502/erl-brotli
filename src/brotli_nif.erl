@@ -30,31 +30,44 @@
 
 -module(brotli_nif).
 
--on_load init/0.
+-on_load(init/0).
 
 -define(APPNAME, brotli).
 -define(LIBNAME, brotli).
 
--export([encoder_create/0, encoder_set_parameter/3, encoder_compress_stream/3,
-         encoder_has_more_output/1, encoder_is_finished/1, encoder_take_output/1]).
--export([decoder_create/0, decoder_decompress_stream/2,
-         decoder_has_more_output/1, decoder_is_finished/1, decoder_is_used/1, decoder_take_output/1,
-         decoder_error_description/1]).
+-export([
+    encoder_create/0,
+    encoder_set_parameter/3,
+    encoder_compress_stream/3,
+    encoder_has_more_output/1,
+    encoder_is_finished/1,
+    encoder_take_output/1
+]).
+-export([
+    decoder_create/0,
+    decoder_decompress_stream/2,
+    decoder_has_more_output/1,
+    decoder_is_finished/1,
+    decoder_is_used/1,
+    decoder_take_output/1,
+    decoder_error_description/1
+]).
 -export([max_compressed_size/1, version/0]).
 
 %%%
 init() ->
-    SoName = case code:priv_dir(?APPNAME) of
-                 {error, bad_name} ->
-                     case filelib:is_dir(filename:join(["..", priv])) of
-                         true ->
-                             filename:join(["..", priv, ?LIBNAME]);
-                         _ ->
-                             filename:join([priv, ?LIBNAME])
-                     end;
-                 Dir ->
-                     filename:join(Dir, ?LIBNAME)
-             end,
+    SoName =
+        case code:priv_dir(?APPNAME) of
+            {error, bad_name} ->
+                case filelib:is_dir(filename:join(["..", priv])) of
+                    true ->
+                        filename:join(["..", priv, ?LIBNAME]);
+                    _ ->
+                        filename:join([priv, ?LIBNAME])
+                end;
+            Dir ->
+                filename:join(Dir, ?LIBNAME)
+        end,
     erlang:load_nif(SoName, 0).
 
 %%% Exported from brotli_nif.c.
