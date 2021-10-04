@@ -1,0 +1,25 @@
+style: github
+template: CHANGELOG.tpl.md
+info:
+  title: CHANGELOG
+  repository_url: https://github.com/hauleth/mix_machine
+options:
+  commits:
+    filters:
+      Type:
+        - ft
+        - fix
+        - docs
+  commit_groups:
+    title_maps:
+      ft: Features
+      fix: Bug Fixes
+      docs: Documentation
+  header:
+    pattern: "^(\\w*)\\:\\s(.*)$"
+    pattern_maps:
+      - Type
+      - Subject
+  notes:
+    keywords:
+      - BREAKING CHANGE
