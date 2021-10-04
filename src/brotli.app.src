@@ -1,10 +1,12 @@
-{application,brotli,
-             [{description,"brotli compression library wrapper for Erlang"},
-              {vsn,"0.2.1"},
-              {registered,[]},
-              {applications,[kernel,stdlib]},
-              {env,[]},
-              {modules,[]},
-              {maintainers,["Jihyun Yu"]},
-              {licenses,["BSD"]},
-              {links,[{"Github","https://github.com/yjh0502/erl-brotli"}]}]}.
+{application, brotli, [
+    {description, "brotli compression library wrapper for Erlang"},
+    {vsn, "0.2.1"},
+    {registered, []},
+    {applications, [kernel, stdlib]},
+    {env, []},
+    {modules, []},
+    {maintainers, ["Jihyun Yu"]},
+    {licenses, ["BSD-3-Clause"]},
+    {exclude_files, ["priv/brotli.so", "priv/brotli"]},
+    {links, [{"Github", "https://github.com/yjh0502/erl-brotli"}]}
+]}.
