@@ -58,12 +58,27 @@ encode(Data) ->
 encode(Data, Opts0) when is_map(Opts0) ->
     Opts = maps:put(size_hint, iolist_size(Data), Opts0),
     Encoder = brotli_encoder:new(Opts),
-    case brotli_encoder:finish(Encoder, Data) of
-        {ok, _} = Result ->
+    case encode_chunks(Encoder, iolist_to_binary(Data), []) of
+        {ok, Compressed} ->
             case brotli_encoder:is_finished(Encoder) of
-                true -> Result;
-                false -> error
+                true -> {ok, iolist_to_binary(Compressed)};
+                false -> {error, nf}
             end;
+        Other ->
+            Other
+    end.
+
+encode_chunks(Encoder, <<Data:(1024 * 1024 + 256 * 1024)/binary, Rest/binary>>, Acc) ->
+    case brotli_encoder:append(Encoder, Data) of
+        {ok, Compressed} ->
+            encode_chunks(Encoder, Rest, [Compressed | Acc]);
+        Other ->
+            Other
+    end;
+encode_chunks(Encoder, Data, Acc) ->
+    case brotli_encoder:finish(Encoder, Data) of
+        {ok, Compressed} ->
+            {ok, lists:reverse([Compressed | Acc])};
         Other ->
             Other
     end.
