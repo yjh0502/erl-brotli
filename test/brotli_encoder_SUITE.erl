@@ -5,7 +5,7 @@
 -include_lib("stdlib/include/assert.hrl").
 -include_lib("common_test/include/ct.hrl").
 
-all() -> [fixture_equal, large_file].
+all() -> [fixture_equal, large_file, huge_file].
 
 fixture_equal(Config) ->
     DataDir = ?config(data_dir, Config),
@@ -19,7 +19,8 @@ fixture_equal(Config) ->
         ct:log("~s = encode(~s)~n", [OutFile, InFile]),
         {ok, In} = file:read_file(InFile),
         {ok, Out} = file:read_file(OutFile),
-        ?assertEqual({ok, Out}, brotli:encode(In))
+        {ok, Encoded} = brotli:encode(In),
+        ?assertEqual(Out, iolist_to_binary(Encoded))
     end,
 
     [Test(Name) || Name <- InFiles].
@@ -29,6 +30,22 @@ large_file(Config) ->
     InFile = filename:join(DataDir, "large"),
     Sha256Sum = <<"24AF7F424EF5433FA9C1BD741B041E8D718162E42BE429858BA042630AB7D0F2">>,
     Encoder = brotli_encoder:new(),
+    Hasher = crypto:hash_init(sha256),
+
+    {ok, File} = file:open(InFile, [read, raw, binary]),
+
+    Hash = compress_and_hash(File, Encoder, Hasher),
+
+    ?assertEqual(Sha256Sum, to_hex(Hash)).
+
+huge_file(Config) ->
+    DataDir = ?config(data_dir, Config),
+    InFile = filename:join(DataDir, "huge"),
+    Sha256Sum = <<"E7FDC0419AC432ED2CE0ABB2E9EED97E05E54CD2930B1187FB02483AA3DC7D7B">>,
+    Encoder = brotli_encoder:new(#{
+        quality => 11,
+        window => 24
+    }),
     Hasher = crypto:hash_init(sha256),
 
     {ok, File} = file:open(InFile, [read, raw, binary]),
