@@ -2,7 +2,7 @@ style: github
 template: CHANGELOG.tpl.md
 info:
   title: CHANGELOG
-  repository_url: https://github.com/hauleth/mix_machine
+  repository_url: https://github.com/yjh0502/erl-brotli
 options:
   commits:
     filters:

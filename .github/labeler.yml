@@ -1,0 +1,8 @@
+scope/nif:
+  - any: ['c_src/brotli_nif.c', 'c_src/Makefile']
+
+scope/ci:
+  - any: ['.github/workflows/*']
+
+scope/test:
+  - any: ['test/*.erl']
