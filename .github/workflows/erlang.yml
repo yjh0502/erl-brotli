@@ -14,11 +14,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        otp_version: ['24.0.2', '23.3.4.2', '22.3.4.20']
+        otp_version: ['25.1.1', '24.3.4.6', '23.3.4.2']
         rebar3_version: ['3.16.1']
         os: [ubuntu-18.04]
         include:
-          - otp_version: '21.3.8.24'
+          - otp_version: '22.3.4.20'
             rebar3_version: '3.15.2'
             os: ubuntu-18.04
     env:
@@ -29,7 +29,7 @@ jobs:
       with:
         otp-version: ${{ matrix.otp_version }}
         rebar3-version: ${{ matrix.rebar3_version }}
-        elixir-version: '1.11.1'
+        elixir-version: '1.13.4'
     - uses: actions/cache@v2
       name: Cache
       with:
@@ -62,7 +62,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        otp_version: ['24.0.2']
+        otp_version: ['24.3.4.6']
         rebar3_version: ['3.16.1']
         os: [ubuntu-18.04]
     env:
@@ -73,7 +73,7 @@ jobs:
       with:
         otp-version: ${{ matrix.otp_version }}
         rebar3-version: ${{ matrix.rebar3_version }}
-        elixir-version: '1.11.1'
+        elixir-version: '1.13.4'
     - uses: actions/cache@v2
       name: Cache
       with:
@@ -90,11 +90,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        otp_version: ['24.0.2', '23.3.4.2', '22.3.4.20']
+        otp_version: ['25.1.1', '24.3.4.6', '23.3.4.2']
         rebar3_version: ['3.16.1']
         os: [ubuntu-18.04]
         include:
-          - otp_version: '21.3.8.24'
+          - otp_version: '22.3.4.20'
             rebar3_version: '3.15.2'
             os: ubuntu-18.04
     steps:
