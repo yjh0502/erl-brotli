@@ -5,7 +5,7 @@ BASEDIR := $(abspath $(CURDIR)/..)
 
 PROJECT = brotli
 
-ERTS_INCLUDE_DIR ?= $(shell erl -noshell -eval "io:format(\"~s/erts-~s/include/\", [code:root_dir(), erlang:system_info(version)]), halt().")
+ERTS_INCLUDE_DIR ?= $(shell erl -noshell -eval "io:format(\"~s/erts-~s/include/\", [code:root_dir(), erlang:system_info(version)])." -s init stop)
 
 ifndef REBAR_BARE_COMPILER_OUTPUT_DIR
 	OUT ?= $(BASEDIR)/priv
