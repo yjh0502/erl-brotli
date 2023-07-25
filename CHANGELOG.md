@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Bug Fixes
+- build on otp 26
+
 
 <a name="v0.3.1"></a>
 ## [v0.3.1] - 2022-01-06
