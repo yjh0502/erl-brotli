@@ -91,7 +91,7 @@ decode(Data, _Opts) ->
         {ok, _} = Result ->
             case brotli_decoder:is_finished(Decoder) of
                 true -> Result;
-                false -> error
+                false -> Result
             end;
         _ ->
             error

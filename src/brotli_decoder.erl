@@ -40,13 +40,30 @@ new() ->
 
 -spec stream(Decoder :: t(), Data :: iodata()) -> {ok | more, iodata()} | error.
 stream(Decoder, Data) ->
-    case brotli_nif:decoder_decompress_stream(Decoder, Data) of
+    case stream(Decoder, Data, []) of
+        {ok, Out} -> {ok, iolist_to_binary(lists:reverse(Out))};
+        {more, Out} -> {more, iolist_to_binary(lists:reverse(Out))};
+        Other -> Other
+    end.
+
+stream(Decoder, In, Out) ->
+    case brotli_nif:decoder_decompress_stream(Decoder, In) of
         ok ->
-            {ok, brotli_nif:decoder_take_output(Decoder)};
-        more ->
-            {more, brotli_nif:decoder_take_output(Decoder)};
+            {ok, stream_take_output(Decoder, Out)};
+        {more_output, N} ->
+            Out2 = stream_take_output(Decoder, Out),
+            stream(Decoder, binary:part(In, {byte_size(In) - N, N}), Out2);
+        {more_input, _N} ->
+            {more, stream_take_output(Decoder, Out)};
         Other ->
             Other
+    end.
+
+
+stream_take_output(Decoder, Data) ->
+    case brotli_nif:decoder_take_output(Decoder) of
+        <<>> -> Data;
+        Output -> stream_take_output(Decoder, [Output | Data])
     end.
 
 is_finished(Decoder) ->

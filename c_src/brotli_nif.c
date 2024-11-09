@@ -67,7 +67,8 @@
 #define ATOMS                                                                  \
   ENTRY(ok)                                                                    \
   ENTRY(error)                                                                 \
-  ENTRY(more)                                                                  \
+  ENTRY(more_input)                                                            \
+  ENTRY(more_output)                                                           \
   ENTRY(finished)
 
 #define ENTRY(X) static ERL_NIF_TERM atom_##X;
@@ -320,11 +321,13 @@ brotli_decoder_decompress_stream(ErlNifEnv *env, int argc,
 
   switch (result) {
   case BROTLI_DECODER_RESULT_SUCCESS:
-  case BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT:
     return atom_ok;
 
+  case BROTLI_DECODER_RESULT_NEEDS_MORE_OUTPUT:
+    return enif_make_tuple2(env, atom_more_output, enif_make_long(env, available_in));
+
   case BROTLI_DECODER_RESULT_NEEDS_MORE_INPUT:
-    return atom_more;
+    return enif_make_tuple2(env, atom_more_input, enif_make_long(env, available_in));
 
   default:
     return atom_error;
