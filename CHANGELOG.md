@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Bug Fixes
+- decode error
+
 
 <a name="v0.3.2"></a>
 ## [v0.3.2] - 2023-07-25
