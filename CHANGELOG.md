@@ -5,6 +5,12 @@
 - decode error
 
 
+<a name="v0.3.3"></a>
+## [v0.3.3] - 2026-01-10
+### Bug Fixes
+- decode error ([`0139047`](https://github.com/yjh0502/erl-brotli/commit/0139047d64d0cc7f6aeb2d2e5e166ca3b1f37ab7))
+
+
 <a name="v0.3.2"></a>
 ## [v0.3.2] - 2023-07-25
 ### Bug Fixes
@@ -28,6 +34,7 @@
 - update library to use stream API ([`bc09c59`](https://github.com/yjh0502/erl-brotli/commit/bc09c5969ae4c5b45c07abdd3eb55cc8652fa0ec))
 
 
-[Unreleased]: https://github.com/yjh0502/erl-brotli/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/yjh0502/erl-brotli/compare/v0.3.3...HEAD
+[v0.3.3]: https://github.com/yjh0502/erl-brotli/compare/v0.3.2...v0.3.3
 [v0.3.2]: https://github.com/yjh0502/erl-brotli/compare/v0.3.1...v0.3.2
 [v0.3.1]: https://github.com/yjh0502/erl-brotli/compare/v0.3.0...v0.3.1
