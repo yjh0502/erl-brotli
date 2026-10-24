@@ -59,7 +59,6 @@ stream(Decoder, In, Out) ->
             Other
     end.
 
-
 stream_take_output(Decoder, Data) ->
     case brotli_nif:decoder_take_output(Decoder) of
         <<>> -> Data;
