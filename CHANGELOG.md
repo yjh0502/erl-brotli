@@ -1,8 +1,11 @@
 <a name="unreleased"></a>
-## [v0.3.4] - 2026-10-24
+## [Unreleased]
 
-### Security
-- update bundled Brotli to 1.2.1 to mitigate CVE-2026-111497
+
+<a name="v0.3.4"></a>
+## [v0.3.4] - 2026-10-24
+### Bug Fixes
+- decode error ([`0139047`](https://github.com/yjh0502/erl-brotli/commit/0139047490ebb6f88fd1a3d7041a05d0714fd696))
 
 
 <a name="v0.3.2"></a>
@@ -28,6 +31,7 @@
 - update library to use stream API ([`bc09c59`](https://github.com/yjh0502/erl-brotli/commit/bc09c5969ae4c5b45c07abdd3eb55cc8652fa0ec))
 
 
+[Unreleased]: https://github.com/yjh0502/erl-brotli/compare/v0.3.4...HEAD
 [v0.3.4]: https://github.com/yjh0502/erl-brotli/compare/v0.3.2...v0.3.4
 [v0.3.2]: https://github.com/yjh0502/erl-brotli/compare/v0.3.1...v0.3.2
 [v0.3.1]: https://github.com/yjh0502/erl-brotli/compare/v0.3.0...v0.3.1
