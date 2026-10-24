@@ -14,16 +14,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        otp_version: ['25.1.1', '24.3.4.6', '23.3.4.2']
-        rebar3_version: ['3.16.1']
-        os: [ubuntu-18.04]
-        include:
-          - otp_version: '22.3.4.20'
-            rebar3_version: '3.15.2'
-            os: ubuntu-18.04
-          - otp_version: '26.0.2'
-            rebar3_version: '3.22.0'
-            os: ubuntu-18.04
+        otp_version: ['26', '27', '28', '29']
+        rebar3_version: ['3.27.1']
+        os: [ubuntu-latest]
     env:
       OTP_VERSION: ${{ matrix.otp_version }}
     steps:
@@ -32,8 +25,7 @@ jobs:
       with:
         otp-version: ${{ matrix.otp_version }}
         rebar3-version: ${{ matrix.rebar3_version }}
-        elixir-version: '1.13.4'
-    - uses: actions/cache@v2
+    - uses: actions/cache@v4
       name: Cache
       with:
         path: |
@@ -65,9 +57,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        otp_version: ['24.3.4.6']
-        rebar3_version: ['3.16.1']
-        os: [ubuntu-18.04]
+        otp_version: ['29']
+        rebar3_version: ['3.27.1']
+        os: [ubuntu-latest]
     env:
       OTP_VERSION: ${{ matrix.otp_version }}
     steps:
@@ -76,8 +68,7 @@ jobs:
       with:
         otp-version: ${{ matrix.otp_version }}
         rebar3-version: ${{ matrix.rebar3_version }}
-        elixir-version: '1.13.4'
-    - uses: actions/cache@v2
+    - uses: actions/cache@v4
       name: Cache
       with:
         path: |
@@ -93,20 +84,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        otp_version: ['25.1.1', '24.3.4.6', '23.3.4.2']
-        rebar3_version: ['3.16.1']
-        os: [ubuntu-18.04]
-        include:
-          - otp_version: '22.3.4.20'
-            rebar3_version: '3.15.2'
-            os: ubuntu-18.04
+        otp_version: ['26', '27', '28', '29']
+        rebar3_version: ['3.27.1']
+        os: [ubuntu-latest]
     steps:
     - uses: actions/checkout@v2
     - uses: erlef/setup-beam@v1
       with:
         otp-version: ${{ matrix.otp_version }}
         rebar3-version: ${{ matrix.rebar3_version }}
-    - uses: actions/cache@v2
+    - uses: actions/cache@v4
       name: Cache
       with:
         path: |
